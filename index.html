@@ -1,0 +1,56 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		
+		<title>d3JS geoJSON sans fichier</title>
+	
+		<script src="d3.v4.min.js"></script>
+		  
+		<style type="text/css">
+			#svg {
+				display: block;
+				margin: auto;		
+			}
+		</style>
+	</head>
+ 
+	<body>
+		<div id="map"></div>
+	</body>
+</html>
+<script type="text/javascript">	
+	const width = 550, height = 550;
+
+	// Create a path object to manipulate geo data
+	const path = d3.geoPath();
+
+	// Define projection property
+	const projection = d3.geoConicConformal() // Lambert-93
+		.center([2.20, 48.85]) // Center on France
+		.scale(30000)
+		.translate([width / 2, height / 2]);
+
+	path.projection(projection); // Assign projection to path object
+
+	// Create the DIV that will contain our map
+	const svg = d3.select('#map').append("svg")
+		.attr("id", "svg")
+		.attr("width", width)
+		.attr("height", height)
+		.attr("viewBox", "0 0 " + width + " " + height)
+		.attr("preserveAspectRatio", "xMinYMid");
+
+	// Append the group that will contain our paths
+	const deps = svg.append("g");
+	
+	d3.json('departments.json', function(departments) {
+    deps.selectAll("path")
+        .data(departments.features)
+        .enter()
+        .append("path")
+        .attr("fill", "#DEC08B")
+        .attr("d", path)
+        .style("stroke", "#271A03");
+	});
+</script>
